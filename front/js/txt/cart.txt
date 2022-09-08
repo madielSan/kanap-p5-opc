@@ -1,0 +1,75 @@
+
+function quantitySelection(idPanier, color, quantity) {
+    let cartInStorage = JSON.parse(localStorage.getItem("cart"));
+    for(let i = 0; i < cartInStorage.length; i++) {
+        if (idPanier === cartInStorage[i][0] && color === cartInStorage[i][1]) {
+            cartInStorage[i][2] = quantity;
+        }
+       localStorage.setItem("cart", JSON.stringify(cartInStorage));
+        window.location.reload;
+    }
+}
+
+// DOM DU PANIER
+const cartSection = document.getElementById("cart__items");
+const cartOrder = document.getElementsByClassName("cart__order");
+const cartPrice = document.getElementsByClassName("cart__price");
+
+
+
+//fonction fetch afin de récupérer et d'afficher les produits ajoutés dans le panier
+
+
+function showCart() {
+ 
+    let cartInStorage = JSON.parse(localStorage.getItem("cart"));
+    let quantity = 0;
+    let price = 0;
+    let totalQuantity= 0;
+
+    if (localStorage.getItem("cart") != null) {
+        for (let i = 0; i < cartInStorage.length; i++ ) {
+            let idPanier = cartInStorage[i][0];
+            let color = cartInStorage[i][1];
+            let urlPanier = 'http://localhost:3000/api/products/' + idPanier;
+    
+
+            fetch(urlPanier)
+            .then(reponse => reponse.json())
+            .then(dataPanier => {
+                console.log(dataPanier);
+                cartSection.innerHTML +=
+                `<article class="cart__item" data-id="${idPanier}" data-color="${color}">
+                    <div class="cart__item__img">
+                        <img src="${dataPanier.imageUrl}" alt="${dataPanier.altTxt}"/>
+                    </div>
+                    <div class="cart__item__content">
+                        <div class="cart__item__content__description">
+                            <h2>${dataPanier.name}</h2>
+                            <p>${color}</p>
+                            <p>${dataPanier.price}&euro;</p>
+                         </div>
+                         <div class="cart__item__content__settings">
+                            <div class="cart__item__content__settings__quantity">
+                                <p>Qté : </p>
+                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" onchange="quantitySelection('${idPanier}', '${color}', this.value)" value="${cartInStorage[i][2]}">
+                            </div>
+                                <div class="cart__item__content__settings__delete">
+                                <p class="deleteItem">Supprimer</p>
+                            </div>
+                       </div>
+                    </div>
+                </article>`;
+                totalQuantity += parseInt(cartInStorage[i][2]);
+                console.log(cartInStorage);
+                console.log(i);
+                document.getElementById("totalQuantity").innerHTML = totalQuantity;
+            });
+        }
+    }
+}
+showCart();
+
+
+
+
