@@ -36,65 +36,22 @@ SelectedProductPage();
 
 
 
-//FONCTIONS POUR LA PAGE PANIER
-
-//fonction permettant de récupérer les données enregistrées dans le localStorage et de les convertir au format JSON
-
-function cart() {
-    let items = [];
-    if (localStorage.getItem("cart") != null) {
-    items = JSON.parse(localStorage.getItem("cart"));
-    }
-   return items;
-}
-
-
-//Fonction permettant d'ajouter les produits sur la page panier
-function addedProduct(idProd, color, quantity) {
-    if (quantity <= 0 || color == "") {
-        return;
-    }
-    let productsOnCart = cart();
-if (productsOnCart.length === 0 ) {
-    productsOnCart = [[idProd, color, quantity]]; 
-} else {
-    let findItem = false;
-    for (let i = 0; i < productsOnCart.length; i++) {
-        if (idProd === productsOnCart[i][0] && color === productsOnCart[i][1] ) {
-            findItem = true;
-            productsOnCart[i][2] += quantity;
-        }
-    }
-    if (findItem === false) {
-        let product = [idProd, color, quantity]
-        productsOnCart.push(product);
-    }
-}
-    localStorage.setItem("cart", JSON.stringify(productsOnCart));
-}
-
-
-function chosenQty() {
-    let quantity = document.getElementById("quantity");
-    return quantity.value;
-
-}
-
-function chosenColor() {
-    let color = document.getElementById("colors");
-    return color.value;
-
-}
 
 const addToCard = document.getElementById("addToCart");
 
 addToCard.addEventListener("click", () => {
-    let quantity = parseInt(chosenQty());
+    let quantity = chosenQty();
     let color = chosenColor();
+    const product = {
+        productId : idProduct,
+        color,
+        quantity
+    } 
     if (quantity > 0 && quantity <= 100 && quantity != 0 && color != "") {
-
-    addedProduct(idProduct, color, quantity);
-    window.location.href = "./cart.html";
+        let panier = cart();
+        panier = upsertProduct(panier, product, false)
+        localStorage.setItem("cart", JSON.stringify(panier));
+        window.location.href = "./cart.html";
     } else {
         alert('Veuillez saisir correctement les champs requis.')
     }
