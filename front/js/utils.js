@@ -1,7 +1,6 @@
 //FONCTIONS POUR LA PAGE PANIER
 
 //fonction permettant de récupérer les données enregistrées dans le localStorage et de les convertir au format JSON
-
 function cart() {
     let items = [];
     if (localStorage.getItem("cart") != null) {
@@ -10,6 +9,7 @@ function cart() {
    return items;
 }
 
+//permet de récupérer l'id d'un produit et de l'indexer.
 function getProductbyId (productsOnCart, product) {
     const indexProduct = productsOnCart.findIndex(item => {
         return item.productId === product.productId && product.color === item.color
@@ -17,7 +17,7 @@ function getProductbyId (productsOnCart, product) {
     return indexProduct !== -1 ? productsOnCart[indexProduct] : null;
 }
 
-
+// permet d'ajouter les produits séléctionnés et de renvoyer les données dans le localStorage . 
 function upsertProduct(productsOnCart, product, isEdit) {
     if (product.quantity <= 0 || product.color == "") {
         return;
@@ -25,7 +25,8 @@ function upsertProduct(productsOnCart, product, isEdit) {
     const productOnCart = getProductbyId(productsOnCart, product);
 
     if(productOnCart) {
-        const qty = isEdit ? product.quantity : productOnCart.quantity + product.quantity;
+        // si la quantité d'un produit est modifiée dans le panier, sa donnée sera égale à la quantité + la quantité ajouté.
+        const qty = isEdit ? product.quantity : productOnCart.quantity + product.quantity; 
         productOnCart.quantity = qty;
     } else {
         productsOnCart.push({
@@ -37,37 +38,23 @@ function upsertProduct(productsOnCart, product, isEdit) {
     return productsOnCart;
 }
 
-
+// fonction permettant de récupérer la valeur de la quantité choisie du produit séléctionné par l'utilisateur
 function chosenQty() {
     let quantity = document.getElementById("quantity");
     return parseInt(quantity.value);
 
 }
 
+// fonction permettant de récupérer la valeur de la couleur choisie du produit séléctionné par l'utilisateur
 function chosenColor() {
     let color = document.getElementById("colors");
     return color.value;
 
 }
 
-
+//variable de récupération des données du panier enregistré dans le localStorage grâce à la fonction cart();
 let cartInStorage = cart();
-
-function quantitySelection(idProduct, color, quantity, price) {
-    const product = {
-        productId : idProduct,
-        color : color,
-        quantity : parseInt(quantity),
-        price: price
-      }
-
-    // const oldProduct = getProductbyId(cartInStorage, product);
-    cartInStorage = upsertProduct(cartInStorage, product, true);
-    localStorage.setItem("cart", JSON.stringify(cartInStorage));
-    showCart();
-    }
-
-
+//permet de supprimer un produit du panier
 function deleteItem() {
     for (i=0; i < cartInStorage.length; i++) {
         cartInStorage.splice(i, 1); 
@@ -76,8 +63,18 @@ function deleteItem() {
     }
 }
 
-
-
+// permet d'enregistrer les produits dont la quantité a été modifié, dans le localstorage puis d'afficher les nouveaux résultats en retournant le DOM à nouveau.
+function quantitySelection(idProduct, color, quantity) {
+    const product = {
+        productId : idProduct,
+        color : color,
+        quantity : parseInt(quantity),
+      }
+    cartInStorage = upsertProduct(cartInStorage, product, true);
+    localStorage.setItem("cart", JSON.stringify(cartInStorage));
+    // location.reload();
+    showCart();
+    }
 
 
 
