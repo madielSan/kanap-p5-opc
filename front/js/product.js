@@ -34,9 +34,6 @@ function SelectedProductPage() {
 }
 SelectedProductPage();
 
-
-
-
 const addToCard = document.getElementById("addToCart");
 
 addToCard.addEventListener("click", () => {

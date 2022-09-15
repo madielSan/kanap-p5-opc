@@ -42,10 +42,10 @@ function showCart() {
                        </div>
                     </div>
                 </article>`;
-                totalQuantity += parseInt(cartInStorage[i].quantity);
+                totalQuantity += parseInt(quantity);
                 document.getElementById("totalQuantity").innerHTML = totalQuantity;
 
-                totalPrice += dataPanier.price * cartInStorage[i].quantity;
+                totalPrice += dataPanier.price * quantity;
                 document.getElementById("totalPrice").innerHTML = totalPrice;
        
             });
@@ -161,7 +161,7 @@ orderBtn.addEventListener("click", function (event) {
     Si c'est le cas alors les données seront enregistrées et l'utilisateur sera renvoyés vers la page de confirmation... */
     if(prenom !== false && firstName.value !== "" && nom !== false && lastName.value !== "" && adresse !== false && address.value !== "" && ville !== false && city.value !== "" && mail !== false && email.value != "") {
         
-        let productsDetails = [];
+        let productsDetails = []; 
 
         for (let i = 0; i < cartInStorage.length; i++) {
             productsDetails.push(cartInStorage[i].productId);

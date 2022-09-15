@@ -38,6 +38,25 @@ function upsertProduct(productsOnCart, product, isEdit) {
     return productsOnCart;
 }
 
+
+// permet d'enregistrer les produits dont la quantité a été modifié, dans le localstorage puis d'afficher les nouveaux résultats en retournant le DOM à nouveau.
+function quantitySelection(idProduct, color, quantity, price) {
+    const product = {
+        productId : idProduct,
+        color : color,
+        quantity : parseInt(quantity),
+      }
+      const oldproduct = getProductbyId(cartInStorage, product);
+      
+      
+    cartInStorage = upsertProduct(cartInStorage, product, true);
+    localStorage.setItem("cart", JSON.stringify(cartInStorage));
+    document.getElementById("totalQuantity").innerHTML = newTotalQuantity;
+    document.getElementById("totalPrice").innerHTML = newTotalPrice;
+
+    // location.reload();
+    }
+
 // fonction permettant de récupérer la valeur de la quantité choisie du produit séléctionné par l'utilisateur
 function chosenQty() {
     let quantity = document.getElementById("quantity");
@@ -63,18 +82,7 @@ function deleteItem() {
     }
 }
 
-// permet d'enregistrer les produits dont la quantité a été modifié, dans le localstorage puis d'afficher les nouveaux résultats en retournant le DOM à nouveau.
-function quantitySelection(idProduct, color, quantity) {
-    const product = {
-        productId : idProduct,
-        color : color,
-        quantity : parseInt(quantity),
-      }
-    cartInStorage = upsertProduct(cartInStorage, product, true);
-    localStorage.setItem("cart", JSON.stringify(cartInStorage));
-    // location.reload();
-    showCart();
-    }
+
 
 
 
