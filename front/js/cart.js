@@ -1,71 +1,153 @@
 // DOM DU PANIER
-const cartSection = document.getElementById("cart__items");
-const cartOrder = document.getElementsByClassName("cart__order");
-const cartPrice = document.getElementsByClassName("cart__price");
-const emptyCart = document.getElementsByTagName("h1");
+
 
 // permet de récupérer les données des produits séléctionnés et enregitrés dans le localStorage et de les afficher.
 function showCart() {
     let totalQuantity = 0;
     let totalPrice = 0;
-        cartSection.innerHTML = "";
-    if (cartInStorage != 0 && cartInStorage != null) {
+        
+    if (cartInStorage != "") {
+
         for (let i = 0; i < cartInStorage.length; i++ ) {
+            
             let idProduct = cartInStorage[i].productId;
             let color = cartInStorage[i].color;
             let quantity = cartInStorage[i].quantity;
             let urlPanier = 'http://localhost:3000/api/products/' + idProduct;
-            if(quantity >= 0 && quantity != null) {
+  
             fetch(urlPanier)
             .then(reponse => reponse.json())
             .then(dataPanier => {
                 console.table(dataPanier);
-                cartSection.innerHTML +=
-                `<article class="cart__item" data-id="${idProduct}" data-color="${color}">
-                    <div class="cart__item__img">
-                        <img src="${dataPanier.imageUrl}" alt="${dataPanier.altTxt}"/>
-                    </div>
-                    <div class="cart__item__content">
-                        <div class="cart__item__content__description">
-                            <h2>${dataPanier.name}</h2>
-                            <p>${color}</p>
-                            <p>${dataPanier.price}&euro;</p>
-                         </div>
-                         <div class="cart__item__content__settings">
-                            <div class="cart__item__content__settings__quantity">
-                                <p>Qté : </p>
-                                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" onchange="quantitySelection('${idProduct}', '${color}', this.value)" value="${cartInStorage[i].quantity}">
-                            </div>
-                                <div class="cart__item__content__settings__delete">
-                                <p class="deleteItem" onclick="deleteItem('${idProduct}', '${color}')">Supprimer</p>
-                            </div>
-                       </div>
-                    </div>
-                </article>`;
+                let article = document.createElement("article");
+                document.getElementById("cart__items").appendChild(article);
+                article.className = "cart__item";
+                article.setAttribute("data-id", idProduct);
+                article.setAttribute("data-color", color);
+
+                let divImgProduct = document.createElement("div");
+                article.appendChild(divImgProduct);
+                divImgProduct.className = "cart__item__img";
+
+                let imgProduct = document.createElement("img");
+                divImgProduct.appendChild(imgProduct);
+                imgProduct.src = dataPanier.imageUrl;
+                imgProduct.setAttribute("alt", dataPanier.altTxt);
+
+                let cartItemContent = document.createElement("div");
+                article.appendChild(cartItemContent);
+                cartItemContent.className = "cart__item__content";
+
+                let  cartItemContentDescription = document.createElement("div");
+                cartItemContent.appendChild(cartItemContentDescription);
+                cartItemContentDescription.className = "cart__item__content__description";
+
+                let itemTitle = document.createElement("h2");
+                cartItemContentDescription.appendChild(itemTitle);
+                itemTitle.innerHTML = dataPanier.name;
+
+                let itemColor = document.createElement("p");
+                cartItemContentDescription.appendChild(itemColor);
+                itemColor.innerHTML = color;
+
+                let itemPrice = document.createElement("p");
+                cartItemContentDescription.appendChild(itemPrice);
+                itemPrice.innerHTML = dataPanier.price + "&ensp;&euro;";
+
+                let cartItemContentSettings = document.createElement("div");
+                cartItemContent.appendChild(cartItemContentSettings);
+                cartItemContentSettings.className ="cart__item__content__settings";
+
+                let cartItemContentSettingsQty = document.createElement("div");
+                cartItemContentSettings.appendChild(cartItemContentSettingsQty);
+                cartItemContentSettingsQty.className = "cart__item__content__settings__quantity";
+
+                let qty = document.createElement("p");
+                cartItemContentSettingsQty.appendChild(qty);
+                qty.innerHTML = "Qté : ";
+
+                let itemQuantity  = document.createElement("input");
+                cartItemContentSettingsQty.appendChild(itemQuantity);
+                itemQuantity.value = quantity;
+                itemQuantity.className = "itemQuantity";
+                itemQuantity.setAttribute("value", "quantity");
+                itemQuantity.setAttribute("type", "number");
+                itemQuantity.setAttribute("min", "1");
+                itemQuantity.setAttribute("max", "100");
+                itemQuantity.setAttribute("name", "itemQuantity");
+                itemQuantity.setAttribute("oninput", "validity.valid||(value='');")
+                itemQuantity.addEventListener("change", (e) => {
+                    e.preventDefault;
+                    quantitySelection(idProduct, color, itemQuantity.value, dataPanier.price);
+                })
+
+                let cartItemContentSettingsDelete = document.createElement("div");
+                cartItemContentSettings.appendChild(cartItemContentSettingsDelete);
+
+                let itemDelete = document.createElement("p");
+                cartItemContentSettingsDelete.appendChild(itemDelete);
+                itemDelete.className = "deleteItem";
+                itemDelete.innerHTML = "<br>Supprimer";
+                itemDelete.style.cursor = "pointer";
+                
+                itemDelete.addEventListener("mouseover", (event) => {
+                    event.preventDefault;
+                    itemDelete.style.textDecoration = "underline";
+                    
+                });
+                itemDelete.addEventListener("mouseout", (event) => {
+                    event.preventDefault;
+                    itemDelete.style.textDecoration = "";
+                });
+                
+                itemDelete.addEventListener("click", (event) => {
+                    event.preventDefault;
+                    document.getElementById("cart__items").removeChild(article);
+                    deleteItem(idProduct, color, itemQuantity.value, dataPanier.price);
+                })
+                
+                // cartSection.innerHTML +=
+                // `<article class="cart__item" data-id="${idProduct}" data-color="${color}">
+                //     <div class="cart__item__img">
+                //         <img src="${dataPanier.imageUrl}" alt="${dataPanier.altTxt}"/>
+                //     </div>
+                //     <div class="cart__item__content">
+                //         <div class="cart__item__content__description">
+                //             <h2>${dataPanier.name}</h2>
+                //             <p>${color}</p>
+                //             <p>${dataPanier.price}&euro;</p>
+                //          </div>
+                //          <div class="cart__item__content__settings">
+                //             <div class="cart__item__content__settings__quantity">
+                //                 <p>Qté : </p>
+                //                 <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" onchange="quantitySelection('${idProduct}', '${color}', this.value, '${dataPanier.price}' )" value="${cartInStorage[i].quantity}">
+                //             </div>
+                //                 <div class="cart__item__content__settings__delete">
+                //                 <p class="deleteItem" onclick="deleteItem('${idProduct}', '${color}')">Supprimer</p>
+                //             </div>
+                //        </div>
+                //     </div>
+                // </article>`;
                 totalQuantity += parseInt(quantity);
                 document.getElementById("totalQuantity").innerHTML = totalQuantity;
 
                 totalPrice += dataPanier.price * quantity;
                 document.getElementById("totalPrice").innerHTML = totalPrice;
        
-            });
-        } else {
-                cartOrder[0].innerHTML = "";
-                cartPrice[0].innerHTML = "";
-                emptyCart[0].innerHTML += ` est tristement vide :( `
-                localStorage.clear();
-            }
+            })
+        } 
+
+        } 
+        else {
+            cartOrder[0].innerHTML = "";
+            cartPrice[0].innerHTML = "";
+            emptyCart[0].innerHTML += " est tristement vide :( "
         }
-        
-    } else {
-        cartOrder[0].innerHTML = "";
-        cartPrice[0].innerHTML = "";
-        emptyCart[0].innerHTML += ` est tristement vide :( `
-        localStorage.clear();
-    }
 
 }
 showCart();
+
+
 
 // Contrôle du formulaire
 
