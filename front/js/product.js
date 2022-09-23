@@ -1,6 +1,6 @@
 const str = window.location;
 const url = new URL(str);
-const idProduct = url.searchParams.get("id"); /* permet de récupérer l'id du produit pour l'utiliser dans l'URL */
+const idProduct = url.searchParams.get("id"); /* objet qui permet à l'url d'accéder à l'id du produit et à ses paramètres. */
 const urlProduct = "http://localhost:3000/api/products/" + idProduct;
 //afficher le produit selectionnés
 function SelectedProductPage() {

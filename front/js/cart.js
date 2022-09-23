@@ -68,7 +68,6 @@ function showCart() {
           cartItemContentSettingsQty.appendChild(itemQuantity);
           itemQuantity.value = quantity;
           itemQuantity.className = "itemQuantity";
-          itemQuantity.setAttribute("value", "quantity");
           itemQuantity.setAttribute("type", "number");
           itemQuantity.setAttribute("min", "1");
           itemQuantity.setAttribute("max", "100");
@@ -246,12 +245,13 @@ if (orderBtn) {
         },
         products: productsDetails,
       };
-      //contient la requête POST permettant d'envoyer les information de commande vers l'API au format JSON
+      //contient la requête POST permettant d'envoyer les informations de commande vers l'API au format JSON
       const options = {
         method: "POST",
         body: JSON.stringify(userDetails),
         headers: { "Content-type": "application/json" },
       };
+      // envoi de la requête vers l'API. Passage de l'id de commande dans l'url de la page de confirmation.
       fetch("http://localhost:3000/api/products/order", options)
         .then((reponse) => reponse.json())
         .then((dataConfirm) => {

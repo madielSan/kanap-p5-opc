@@ -3,7 +3,7 @@ const cartSection = document.getElementById("cart__items");
 const cartOrder = document.getElementsByClassName("cart__order");
 const cartPrice = document.getElementsByClassName("cart__price");
 const emptyCart = document.getElementsByTagName("h1");
-//fonction permettant de récupérer les données enregistrées dans le localStorage et de les convertir au format JSON
+//fonction permettant de récupérer les données, de les enregistrrt dans le localStorage, au format JSON
 function cart() {
   let items = [];
   if (localStorage.getItem("cart") != null) {
@@ -24,7 +24,8 @@ function getProductbyId(productsOnCart, product) {
   }
 }
 
-// permet d'ajouter les produits séléctionnés et de renvoyer les données dans le localStorage .
+// permet d'ajouter les produits séléctionnés et de renvoyer les données dans le localStorage.
+// Si on modifie la quantité d'un produit, la modification sera ajoutée.
 function upsertProduct(productsOnCart, product, isEdit) {
   if (product.quantity === undefined || product.color == "") {
     return;
@@ -32,7 +33,7 @@ function upsertProduct(productsOnCart, product, isEdit) {
   const productOnCart = getProductbyId(productsOnCart, product);
 
   if (productOnCart) {
-    // si la quantité d'un produit est modifiée dans le panier, sa donnée sera égale à la quantité + la quantité ajouté.
+    // si la quantité d'un produit est modifiée dans le panier, sa donnée sera égale à la quantité enregistrée + la quantité ajouté.
     const qty = isEdit
       ? product.quantity
       : productOnCart.quantity + product.quantity;
@@ -47,8 +48,11 @@ function upsertProduct(productsOnCart, product, isEdit) {
   return productsOnCart;
 }
 
+
+//variable de récupération des données du panier enregistré dans le localStorage grâce à la fonction cart();
 let cartInStorage = cart();
-// permet d'enregistrer les produits dont la quantité a été modifié, dans le localstorage puis d'afficher les nouveaux résultats en retournant le DOM à nouveau.
+//permet la modification des données du panier (quantité produit, prix total, quantité total) 
+//dans le localStorage et dans le DOM lorsque la quantité d'un produit a été modifiée 
 function quantitySelection(idProduct, color, quantity, price) {
   const product = {
     productId: idProduct,
@@ -74,7 +78,7 @@ function quantitySelection(idProduct, color, quantity, price) {
   localStorage.setItem("cart", JSON.stringify(cartInStorage));
   document.getElementById("totalQuantity").innerHTML = newTotalQuantity;
   document.getElementById("totalPrice").innerHTML = newTotalPrice;
-
+// si l'utilisateur n'entre aucun nombre dans l'input de quantité.
   if (!newTotalQuantity) {
     product.quantity = 0;
     cartInStorage = upsertProduct(cartInStorage, product, true);
@@ -84,20 +88,6 @@ function quantitySelection(idProduct, color, quantity, price) {
     location.reload();
   }
 }
-
-// fonction permettant de récupérer la valeur de la quantité choisie du produit séléctionné par l'utilisateur
-function chosenQty() {
-  let quantity = document.getElementById("quantity");
-  return parseInt(quantity.value);
-}
-
-// fonction permettant de récupérer la valeur de la couleur choisie du produit séléctionné par l'utilisateur
-function chosenColor() {
-  let color = document.getElementById("colors");
-  return color.value;
-}
-
-//variable de récupération des données du panier enregistré dans le localStorage grâce à la fonction cart();
 
 //permet de supprimer un produit du panier
 function deleteItem(idProduct, color, quantity, price) {
@@ -138,3 +128,16 @@ function deleteItem(idProduct, color, quantity, price) {
     }
   }
 }
+
+//Fonctions page Product.
+// fonction permettant de récupérer la valeur de la quantité choisie du produit séléctionné par l'utilisateur (page produit)
+function chosenQty() {
+    let quantity = document.getElementById("quantity");
+    return parseInt(quantity.value);
+  }
+  
+  // fonction permettant de récupérer la valeur de la couleur choisie du produit séléctionné par l'utilisateur (page produit)
+  function chosenColor() {
+    let color = document.getElementById("colors");
+    return color.value;
+  }
